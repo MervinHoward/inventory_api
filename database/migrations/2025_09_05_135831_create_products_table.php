@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->string('description');
+            $table->foreignId('purchasing_unit_id')->constrained('units')->onDelete('cascade');
+            $table->foreignId('selling_unit_id')->constrained('units')->onDelete('cascade');
+            $table->decimal('purchasing_price', 10, 2);
+            $table->decimal('selling_price', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

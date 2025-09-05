@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->string('code')->unique();
+            $table->date('date');
+            $table->decimal('grand_total', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
