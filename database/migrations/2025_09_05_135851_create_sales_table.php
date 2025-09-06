@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->date('date');
             $table->decimal('grand_total', 10, 2);
-            $table->string('purchase_file')->nullable();
+            $table->string('sale_file')->nullable();
             $table->date('payment_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
