@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Purchase;
 use App\Models\PurchaseProduct;
+use App\Models\Supplier;
+use Illuminate\Support\Str;
 
 class PurchaseRepository
 {
@@ -18,8 +20,8 @@ class PurchaseRepository
     public function getById(int $id, array $fields)
     {
         return Purchase::select($fields)
-        ->with('products', 'supplier')
-        ->findOrFail($id);
+            ->with('products', 'supplier')
+            ->findOrFail($id);
     }
 
     public function create(array $data)
@@ -61,5 +63,45 @@ class PurchaseRepository
             ->with('products')
             ->latest()
             ->paginate(20);
+    }
+
+    public function getTransactionBySupplierAndDate(int $supplierId, string $date)
+    {
+        return Purchase::where('supplier_id', $supplierId)
+            ->where('date', $date)
+            ->with('products');
+    }
+
+    private function getSupplierInitial(string $supplierName): string
+    {
+        // Daftar kata yang akan diabaikan (case-insensitive)
+        $ignoreWords = ['pt', 'cv', 'ud', 'fa', 'toko', 'firma', 'corp', 'corporation', 'dan', 'of', 'the'];
+
+        // Pecah string menjadi array kata-kata
+        $words = collect(explode(' ', Str::lower($supplierName)));
+
+        // Filter kata-kata yang tidak masuk dalam daftar yang diabaikan
+        $filteredWords = $words->filter(function ($word) use ($ignoreWords) {
+            return !in_array($word, $ignoreWords) && Str::length($word) > 0;
+        });
+
+        if ($filteredWords->count() === 1) {
+            // Jika hanya satu kata, ambil dua huruf pertama
+            return Str::substr($filteredWords->first(), 0, 2);
+        } else {
+            // Jika lebih dari satu kata, ambil huruf pertama dari masing-masing kata
+            return $filteredWords->map(function ($word) {
+                return Str::substr($word, 0, 1);
+            })->implode('');
+        }
+    }
+
+    public function generateCode(int $supplierId, string $date)
+    {
+        $todayPurchaseCount = $this->getTransactionBySupplierAndDate($supplierId, $date)->count();
+        $supplierName = Supplier::findOrFail($supplierId)->name;
+        $supplierInitial = $this->getSupplierInitial($supplierName);
+        $formattedDate = date('dmy', strtotime($date));
+        return $supplierInitial . '-' . $formattedDate . '-' . str_pad($todayPurchaseCount + 1, 3, '0', STR_PAD_LEFT);
     }
 }

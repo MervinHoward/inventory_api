@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Sale;
 use App\Models\SaleProduct;
+use Illuminate\Support\Str;
 
 class SaleRepository {
     public function getAll(array $data) {
@@ -45,5 +46,34 @@ class SaleRepository {
 
     public function getTransactionByCustomer(int $customerId) {
         return Sale::where('customer_id', $customerId)->with('products')->latest()->paginate(20);
+    }
+
+    public function getTransactionByCustomerAndDate(int $customerId, string $date)
+    {
+        return Sale::where('customer_id', $customerId)
+            ->where('date', $date)
+            ->with('products');
+    }
+
+    private function getCustomerInitial(string $customerName): string
+    {
+        $words = collect(explode(' ', Str::lower($customerName)));
+
+        if ($words->count() === 1) {
+            return Str::substr($words->first(), 0, 2);
+        } else {
+            return $words->map(function ($word) {
+                return Str::substr($word, 0, 1);
+            })->implode('');
+        }
+    }
+
+    public function generateCode(int $customerId, string $date)
+    {
+        $todaySaleCount = $this->getTransactionByCustomerAndDate($customerId, $date)->count();
+        $customerName = Sale::findOrFail($customerId)->name;
+        $customerInitial = $this->getCustomerInitial($customerName);
+        $formattedDate = date('dmy', strtotime($date));
+        return $customerInitial . '-' . $formattedDate . '-' . str_pad($todaySaleCount + 1, 3, '0', STR_PAD_LEFT);
     }
 }
