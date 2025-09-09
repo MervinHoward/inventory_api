@@ -23,7 +23,11 @@ class Product extends Model
         'selling_price' => 'decimal:2'
     ];
 
-    public function unit() {
+    public function purchasingUnit() {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function sellingUnit() {
         return $this->belongsTo(Unit::class);
     }
 

@@ -19,17 +19,16 @@ class Purchase extends Model
     ];
 
     protected $casts = [
-        'data' => 'date',
+        'date' => 'date',
         'grand_total' => 'decimal:2',
-        'payment_date' => 'date',
-        'purchase_file' => 'file'
+        'payment_date' => 'date'
     ];
 
     public function supplier() {
         return $this->belongsTo(Supplier::class);
     }
 
-    public function purchaseProducts() {
+    public function products() {
         return $this->hasMany(PurchaseProduct::class);
     }
 }

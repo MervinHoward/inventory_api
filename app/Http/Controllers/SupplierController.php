@@ -2,64 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Supplier;
-use Illuminate\Http\Request;
+use App\Http\Requests\SupplierRequest;
+use App\Http\Resources\SupplierResource;
+use App\Services\SupplierService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SupplierController extends Controller
 {
+    private SupplierService $supplierService;
+
+    public function __construct(SupplierService $supplierService)
+    {
+        $this->supplierService = $supplierService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $fields = ['id', 'name', 'phone'];
+        $suppliers = $this->supplierService->getAll($fields);
+        return response()->json(SupplierResource::collection($suppliers));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SupplierRequest $request)
     {
-        //
+        $supplier = $this->supplierService->create($request->validated());
+        return response()->json(new SupplierResource($supplier), 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(int $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Supplier $supplier)
-    {
-        //
+        try {
+            $fields = ['id', 'name', 'phone'];
+            $supplier = $this->supplierService->getById($id, $fields);
+            return response()->json(new SupplierResource($supplier));
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Supplier not found.'
+            ], 404);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(int $id, SupplierRequest $request)
     {
-        //
+        try {
+            $supplier = $this->supplierService->update($id, $request->validated());
+            return response()->json(new SupplierResource($supplier));
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Supplier not found.'
+            ], 404);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(int $id)
     {
-        //
+        try {
+            $this->supplierService->delete($id);
+            return response()->json([
+                'message' => 'supplier deleted successfully.'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Supplier not found.'
+            ], 404);
+        }
     }
 }

@@ -6,11 +6,11 @@ use App\Models\Product;
 
 class ProductRepository {
     public function getAll(array $fields) {
-        return Product::select($fields)->with('unit')->latest()->paginate(20);
+        return Product::select($fields)->with(['purchasingUnit', 'sellingUnit'])->latest()->paginate(20);
     }
 
     public function getById(int $id, array $fields) {
-        return Product::select($fields)->with('unit')->findOrFail($id);
+        return Product::select($fields)->with(['purchasingUnit', 'sellingUnit'])->findOrFail($id);
     }
 
     public function create(array $data) {

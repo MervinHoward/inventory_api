@@ -19,9 +19,8 @@ class Sale extends Model
     ];
 
     protected $casts = [
-        'data' => 'date',
+        'date' => 'date',
         'grand_total' => 'decimal:2',
-        'sale_file' => 'file',
         'payment_date' => 'date'
     ];
 
@@ -29,7 +28,7 @@ class Sale extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function saleProducts() {
+    public function products() {
         return $this->hasMany(SaleProduct::class);
     }
 }
