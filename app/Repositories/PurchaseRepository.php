@@ -13,7 +13,7 @@ class PurchaseRepository
     {
         return Purchase::select($fields)
             ->with('products', 'supplier')
-            ->latest()
+            ->orderBy('date')
             ->paginate(20);
     }
 
@@ -61,7 +61,7 @@ class PurchaseRepository
     {
         return Purchase::where('supplier_id', $supplierId)
             ->with('products')
-            ->latest()
+            ->orderBy('date')
             ->paginate(20);
     }
 

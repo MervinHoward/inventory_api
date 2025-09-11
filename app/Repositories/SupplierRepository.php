@@ -6,7 +6,7 @@ use App\Models\Supplier;
 
 class SupplierRepository {
     public function getAll(array $fields) {
-        return Supplier::select($fields)->latest()->paginate(20);
+        return Supplier::select($fields)->orderBy('name')->paginate(20);
     }
 
     public function getById(int $id, array $fields) {

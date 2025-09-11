@@ -6,7 +6,7 @@ use App\Models\Customer;
 
 class CustomerRepository {
     public function getAll(array $fields) {
-        return Customer::select($fields)->latest()->paginate(20);
+        return Customer::select($fields)->orderBy('name')->paginate(20);
     }
 
     public function getById(int $id, array $fields) {

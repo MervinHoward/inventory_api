@@ -8,7 +8,7 @@ class UnitRepository
 {
     public function getAll(array $fields)
     {
-        return Unit::select($fields)->latest()->paginate(20);
+        return Unit::select($fields)->orderBy('name')->paginate(20);
     }
 
     public function getById(int $id, array $fields)

@@ -6,7 +6,7 @@ use App\Models\Product;
 
 class ProductRepository {
     public function getAll(array $fields) {
-        return Product::select($fields)->with(['purchasingUnit', 'sellingUnit'])->latest()->paginate(20);
+        return Product::select($fields)->with(['purchasingUnit', 'sellingUnit'])->orderBy('name')->paginate(20);
     }
 
     public function getById(int $id, array $fields) {

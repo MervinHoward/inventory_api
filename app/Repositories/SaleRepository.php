@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class SaleRepository {
     public function getAll(array $data) {
-        return Sale::select($data)->with('products', 'customer')->latest()->paginate(20);
+        return Sale::select($data)->with('products', 'customer')->orderBy('date')->paginate(20);
     }
 
     public function getById(int $id, array $data) {
@@ -45,7 +45,7 @@ class SaleRepository {
     }
 
     public function getTransactionByCustomer(int $customerId) {
-        return Sale::where('customer_id', $customerId)->with('products')->latest()->paginate(20);
+        return Sale::where('customer_id', $customerId)->with('products')->orderBy('date')->paginate(20);
     }
 
     public function getTransactionByCustomerAndDate(int $customerId, string $date)
