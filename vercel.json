@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-"version": 2,
+{
+    "version": 2,
     "framework": null,
     "functions": {
         "api/index.php": { "runtime": "vercel-php@0.6.0" }
@@ -27,9 +27,4 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
     }
-=======
-{
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "index.php"
->>>>>>> 5d742aafa308622bb5d6d957d0ca3e1f7728d076
 }
